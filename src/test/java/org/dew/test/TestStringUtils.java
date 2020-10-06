@@ -51,7 +51,7 @@ public class TestStringUtils extends TestCase {
     System.out.println("indexOfOpenXmlTag = " + ot + ", indexOfCloseXmlTag = " + ct);
     
     xml =  "<?xml version=\"1.0\"?>";
-    xml += "<d:person xmlns:d=\"demo\" firstName  = \"Clark\" lastName = \"Kent\">";
+    xml += "<d:person xmlns:d=\"demo\" firstName=\"Clark\" lastName  = \"Kent\">";
     xml += "</d:person>";
     
     System.out.println("xml ----------------------------------------");
