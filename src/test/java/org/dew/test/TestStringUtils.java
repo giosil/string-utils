@@ -38,15 +38,31 @@ public class TestStringUtils extends TestCase {
     String tag = "lastName";
     String def = "";
     
-    System.out.println("xml = " + xml);
+    System.out.println("xml ----------------------------------------");
+    System.out.println(xml);
+    System.out.println("--------------------------------------------");
     
-    String lastName = SUtil.getXmlVal(xml, tag, false, "");
+    String lastName = SUtil.getXmlVal(xml, tag, false, def);
     System.out.println("SUtil.getXmlVal(xml, \"" + tag + "\", false, \"" + def + "\") -> " + lastName);
     
-    int ot = SUtil.indexOfOpenXmlTag(xml, tag, false);
+    int ot = SUtil.indexOfOpenXmlTag(xml,  tag, false);
     int ct = SUtil.indexOfCloseXmlTag(xml, tag, false);
     
-    System.out.println("ot = " + ot + ", ct = " + ct);
+    System.out.println("indexOfOpenXmlTag = " + ot + ", indexOfCloseXmlTag = " + ct);
+    
+    xml =  "<?xml version=\"1.0\"?>";
+    xml += "<d:person xmlns:d=\"demo\" firstName  = \"Clark\" lastName = \"Kent\">";
+    xml += "</d:person>";
+    
+    System.out.println("xml ----------------------------------------");
+    System.out.println(xml);
+    System.out.println("--------------------------------------------");
+    
+    tag = "person";
+    String att = "lastName";
+    
+    lastName = SUtil.getXmlAttribVal(xml, tag, att, def);
+    System.out.println("SUtil.getXmlAttribVal(xml, \"" + tag + "\", \"" + att + "\", \"" + def + "\") -> " + lastName);
   }
   
 }

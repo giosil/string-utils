@@ -147,7 +147,7 @@ class SUtil
     boolean isTag     = false;
     boolean isComment = false;
     int     beginTag  = 0;
-    StringBuilder sbTagName = new StringBuilder();
+    StringBuilder sbTag = new StringBuilder();
     for(int i = start; i < length; i++) {
       char c = xml.charAt(i);
       
@@ -165,13 +165,13 @@ class SUtil
       
       if(c == '<') {
         isTag = true;
-        sbTagName.setLength(0);
+        sbTag.setLength(0);
         beginTag = i;
       }
       else if(c == '>') {
         isTag = false;
         
-        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
@@ -189,7 +189,7 @@ class SUtil
         }
       }
       else if(isTag) {
-        sbTagName.append(c);
+        sbTag.append(c);
       }
     }
     return -1;
@@ -219,7 +219,7 @@ class SUtil
     boolean isTag     = false;
     boolean isComment = false;
     int     beginTag  = 0;
-    StringBuilder sbTagName = new StringBuilder();
+    StringBuilder sbTag = new StringBuilder();
     for(int i = 0; i < length; i++) {
       char c = xml.charAt(i);
       
@@ -237,13 +237,13 @@ class SUtil
       
       if(c == '<') {
         isTag = true;
-        sbTagName.setLength(0);
+        sbTag.setLength(0);
         beginTag = i;
       }
       else if(c == '>') {
         isTag = false;
         
-        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
@@ -261,7 +261,7 @@ class SUtil
         }
       }
       else if(isTag) {
-        sbTagName.append(c);
+        sbTag.append(c);
       }
     }
     return -1;
@@ -307,7 +307,7 @@ class SUtil
     boolean tagFound  = false;
     int endOpenTag    = -1;
     int begCloseTag   = -1;
-    StringBuilder sbTagName = new StringBuilder();
+    StringBuilder sbTag = new StringBuilder();
     for(int i = 0; i < length; i++) {
       char c = xml.charAt(i);
       
@@ -325,13 +325,13 @@ class SUtil
       
       if(c == '<') {
         isTag = true;
-        sbTagName.setLength(0);
+        sbTag.setLength(0);
         begCloseTag = i;
       }
       else if(c == '>') {
         isTag = false;
         
-        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
@@ -354,7 +354,7 @@ class SUtil
         }
       }
       else if(isTag) {
-        sbTagName.append(c);
+        sbTag.append(c);
       }
     }
     
@@ -378,6 +378,190 @@ class SUtil
       }
     }
     return value.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&quot;", "\"").replace("&apos;", "'");
+  }
+  
+  public static
+  String getXmlAttribVal(String xml, String tag, String attribName, String defaultValue) 
+  {
+    return getXmlAttribVal(xml, tag, attribName, false, 0, defaultValue);
+  }
+  
+  public static
+  String getXmlAttribVal(String xml, String tag, String attribName, boolean ignoreCase, String defaultValue) 
+  {
+    return getXmlAttribVal(xml, tag, attribName, ignoreCase, 0, defaultValue);
+  }
+  
+  public static
+  String getXmlAttribVal(String xml, String tag, String attribName, boolean ignoreCase, int start, String defaultValue) 
+  {
+    if(xml == null || xml.length() == 0) {
+      return defaultValue;
+    }
+    if(tag == null || tag.length() == 0) {
+      return defaultValue;
+    }
+    if(attribName == null || attribName.length() == 0) {
+      return defaultValue;
+    }
+    int length = xml.length();
+    if(start < 0) start = 0;
+    if(length <= start) {
+      return defaultValue;
+    }
+    
+    if(ignoreCase) tag = tag.toLowerCase();
+    if(ignoreCase) attribName = attribName.toLowerCase();
+    
+    boolean isTag     = false;
+    boolean isComment = false;
+    StringBuilder sbTag = new StringBuilder();
+    for(int i = 0; i < length; i++) {
+      char c = xml.charAt(i);
+      
+      if(isComment) {
+        if(c == '>' && xml.substring(i-2, i).equals("--")) {
+          isComment = false;
+        }
+        continue;
+      }
+      else if(c == '-') {
+        if(i > 2 && xml.substring(i-3, i).equals("<!-")) {
+          isComment = true;
+        }
+      }
+      
+      if(c == '<') {
+        isTag = true;
+        sbTag.setLength(0);
+      }
+      else if(c == '>') {
+        isTag = false;
+        
+        String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
+        boolean closeTag = tagName.startsWith("/");
+        int sepAttribs = tagName.indexOf(' ');
+        if(sepAttribs > 0) {
+          tagName = tagName.substring(0, sepAttribs);
+        }
+        int sepNamespace = tagName.indexOf(':');
+        if(sepNamespace >= 0) {
+          tagName = tagName.substring(sepNamespace + 1);
+        }
+        
+        if(tagName.equals(tag)) {
+          if(!closeTag) {
+            String tagWithAttribs = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
+            int[] valueBounds = getValueBoundsFromKeyValuePair(tagWithAttribs, attribName, '=');
+            if(valueBounds != null && valueBounds.length > 1 && valueBounds[0] >= 0) {
+              return sbTag.toString().trim().substring(valueBounds[0], valueBounds[1]);
+            }
+          }
+        }
+      }
+      else if(isTag) {
+        sbTag.append(c);
+      }
+    }
+    
+    return defaultValue;
+  }
+  
+  public static
+  String getValueFromKeyValuePair(String text, String key, char sep, String defaultValue)
+  {
+    int[] valueBounds = getValueBoundsFromKeyValuePair(text, key, sep);
+    if(valueBounds == null || valueBounds.length < 2 || valueBounds[0] < 0) {
+      return defaultValue;
+    }
+    return text.substring(valueBounds[0], valueBounds[1]);
+  }
+  
+  public static
+  int[] getValueBoundsFromKeyValuePair(String text, String key, char sep)
+  {
+    if(text == null || text.length() == 0) {
+      return new int[] {-1, -1};
+    }
+    if(key == null || key.length() == 0) {
+      return new int[] {-1, -1};
+    }
+    
+    int keyLength  = key.length();
+    int textLength = text.length();
+    int begValue   = -1;
+    int endValue   = -1;
+    int currIdx    = 0;
+    while(true) {
+      currIdx = text.indexOf(key, currIdx);
+      if(currIdx < 0) break;
+      
+      if(currIdx > 0) {
+        char c_1 = text.charAt(currIdx - 1);
+        if(c_1 > 32) {
+          currIdx += keyLength;
+          if(currIdx >= textLength) break;
+          continue;
+        }
+      }
+      
+      int s = currIdx + keyLength;
+      if(s < textLength) {
+        
+        // Find sep
+        int idxSep = -1;
+        for(int j = s; j < textLength; j++) {
+          char c = text.charAt(j);
+          if(c == sep) {
+            idxSep = j;
+            break;
+          }
+          if(c < 33) continue;
+          break;
+        }
+        
+        if(idxSep < 0) {
+          currIdx += keyLength;
+          if(currIdx >= textLength) break;
+          continue;
+        }
+        
+        // Find value
+        char wrapp = ' ';
+        boolean isValue = false;
+        for(int j = idxSep + 1; j < textLength; j++) {
+          char c = text.charAt(j);
+          if(c < 33 && !isValue) continue;
+          if(!isValue) {
+            isValue = true;
+            if(c == '"' || c == '\'') {
+              wrapp = c;
+              begValue = j + 1;
+            }
+            else {
+              begValue = j;
+            }
+          }
+          else if(c == wrapp) {
+            if(text.charAt(j - 1) == '\\') {
+              continue;
+            }
+            endValue = j;
+            break;
+          }
+        }
+        
+        if(begValue > 0 && endValue >= begValue) {
+          break;
+        }
+        currIdx += keyLength;
+        if(currIdx >= textLength) break;
+      }
+    }
+    if(begValue >= 0 && endValue >= begValue) {
+      return new int[] {begValue, endValue};
+    }
+    return new int[] {-1, -1};
   }
   
   public static
