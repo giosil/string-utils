@@ -17,23 +17,36 @@ public class TestStringUtils extends TestCase {
   }
   
   public void testApp() {
-    
     String s1 = "change";
-    String df = "   -  ";
     String s2 = "charge";
     
-    System.out.println("s1 = " + s1);
-    System.out.println("     " + df);
-    System.out.println("s2 = " + s2);
-      
-    int hammingDistance = SUtil.getHammingDistance(s1, s2);
-    System.out.println("hammingDistance = " + hammingDistance);
+    int hd = SUtil.getHammingDistance(s1, s2);
+    System.out.println("SUtil.getHammingDistance(\"" + s1 + "\", \"" + s2 + "\") -> " + hd);
     
-    int levenshteinDistance = SUtil.getLevenshteinDistance(s1, s2);
-    System.out.println("levenshteinDistance = " + levenshteinDistance);
+    int ldr = SUtil.getLevenshteinDistance(s1, s2);
+    System.out.println("SUtil.getLevenshteinDistance(\"" + s1 + "\", \"" + s2 + "\") -> " + ldr);
     
-    int levenshteinDistanceDyn = SUtil.getLevenshteinDistanceDyn(s1, s2);
-    System.out.println("levenshteinDistanceDyn = " + levenshteinDistanceDyn);
+    int ldd = SUtil.getLevenshteinDistanceDyn(s1, s2);
+    System.out.println("SUtil.getLevenshteinDistanceDyn(\"" + s1 + "\", \"" + s2 + "\") -> " + ldd);
+    
+    String xml = "<?xml version=\"1.0\"?>";
+    xml += "<d:person xmlns:d=\"demo\">";
+    xml += "<d:firstName d:checked=\"true\">Clark</d:firstName>";
+    xml += "<!-- <d:lastName d:checked=\"true\">Fake</d:lastName> -->";
+    xml += "<d:lastName d:checked=\"true\"><![CDATA[Kent]]></d:lastName>";
+    xml += "</d:person>";
+    String tag = "lastName";
+    String def = "";
+    
+    System.out.println("xml = " + xml);
+    
+    String lastName = SUtil.getXmlVal(xml, tag, false, "");
+    System.out.println("SUtil.getXmlVal(xml, \"" + tag + "\", false, \"" + def + "\") -> " + lastName);
+    
+    int ot = SUtil.indexOfOpenXmlTag(xml, tag, false);
+    int ct = SUtil.indexOfCloseXmlTag(xml, tag, false);
+    
+    System.out.println("ot = " + ot + ", ct = " + ct);
   }
   
 }

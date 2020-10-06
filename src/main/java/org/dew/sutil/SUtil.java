@@ -124,12 +124,269 @@ class SUtil
   }
   
   public static
+  int indexOfOpenXmlTag(String xml, String tag, boolean ignoreCase) 
+  {
+    return indexOfOpenXmlTag(xml, tag, ignoreCase, 0);
+  }
+  
+  public static
+  int indexOfOpenXmlTag(String xml, String tag, boolean ignoreCase, int start) 
+  {
+    if(xml == null || xml.length() == 0) {
+      return -1;
+    }
+    if(tag == null || tag.length() == 0) {
+      return -1;
+    }
+    int length = xml.length();
+    if(start < 0) start = 0;
+    if(length <= start) return -1;
+    
+    if(ignoreCase) tag = tag.toLowerCase();
+    
+    boolean isTag     = false;
+    boolean isComment = false;
+    int     beginTag  = 0;
+    StringBuilder sbTagName = new StringBuilder();
+    for(int i = start; i < length; i++) {
+      char c = xml.charAt(i);
+      
+      if(isComment) {
+        if(c == '>' && xml.substring(i-2, i).equals("--")) {
+          isComment = false;
+        }
+        continue;
+      }
+      else if(c == '-') {
+        if(i > 2 && xml.substring(i-3, i).equals("<!-")) {
+          isComment = true;
+        }
+      }
+      
+      if(c == '<') {
+        isTag = true;
+        sbTagName.setLength(0);
+        beginTag = i;
+      }
+      else if(c == '>') {
+        isTag = false;
+        
+        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        boolean closeTag = tagName.startsWith("/");
+        int sepAttribs = tagName.indexOf(' ');
+        if(sepAttribs > 0) {
+          tagName = tagName.substring(0, sepAttribs);
+        }
+        int sepNamespace = tagName.indexOf(':');
+        if(sepNamespace >= 0) {
+          tagName = tagName.substring(sepNamespace + 1);
+        }
+        
+        if(tagName.equals(tag)) {
+          if(!closeTag) {
+            return beginTag;
+          }
+        }
+      }
+      else if(isTag) {
+        sbTagName.append(c);
+      }
+    }
+    return -1;
+  }
+  
+  public static
+  int indexOfCloseXmlTag(String xml, String tag, boolean ignoreCase) 
+  {
+    return indexOfCloseXmlTag(xml, tag, ignoreCase, 0);
+  }
+  
+  public static
+  int indexOfCloseXmlTag(String xml, String tag, boolean ignoreCase, int start) 
+  {
+    if(xml == null || xml.length() == 0) {
+      return -1;
+    }
+    if(tag == null || tag.length() == 0) {
+      return -1;
+    }
+    int length = xml.length();
+    if(start < 0) start = 0;
+    if(length <= start) return -1;
+    
+    if(ignoreCase) tag = tag.toLowerCase();
+    
+    boolean isTag     = false;
+    boolean isComment = false;
+    int     beginTag  = 0;
+    StringBuilder sbTagName = new StringBuilder();
+    for(int i = 0; i < length; i++) {
+      char c = xml.charAt(i);
+      
+      if(isComment) {
+        if(c == '>' && xml.substring(i-2, i).equals("--")) {
+          isComment = false;
+        }
+        continue;
+      }
+      else if(c == '-') {
+        if(i > 2 && xml.substring(i-3, i).equals("<!-")) {
+          isComment = true;
+        }
+      }
+      
+      if(c == '<') {
+        isTag = true;
+        sbTagName.setLength(0);
+        beginTag = i;
+      }
+      else if(c == '>') {
+        isTag = false;
+        
+        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        boolean closeTag = tagName.startsWith("/");
+        int sepAttribs = tagName.indexOf(' ');
+        if(sepAttribs > 0) {
+          tagName = tagName.substring(0, sepAttribs);
+        }
+        int sepNamespace = tagName.indexOf(':');
+        if(sepNamespace >= 0) {
+          tagName = tagName.substring(sepNamespace + 1);
+        }
+        
+        if(tagName.equals(tag)) {
+          if(closeTag) {
+            return beginTag;
+          }
+        }
+      }
+      else if(isTag) {
+        sbTagName.append(c);
+      }
+    }
+    return -1;
+  }
+  
+  public static
+  String getXmlVal(String xml, String tag) 
+  {
+    return getXmlVal(xml, tag, false, 0, null);
+  }
+  
+  public static
+  String getXmlVal(String xml, String tag, String defaultValue) 
+  {
+    return getXmlVal(xml, tag, false, 0, defaultValue);
+  }
+  
+  public static
+  String getXmlVal(String xml, String tag, boolean ignoreCase, String defaultValue) 
+  {
+    return getXmlVal(xml, tag, ignoreCase, 0, defaultValue);
+  }
+  
+  public static
+  String getXmlVal(String xml, String tag, boolean ignoreCase, int start, String defaultValue) 
+  {
+    if(xml == null || xml.length() == 0) {
+      return defaultValue;
+    }
+    if(tag == null || tag.length() == 0) {
+      return defaultValue;
+    }
+    int length = xml.length();
+    if(start < 0) start = 0;
+    if(length <= start) {
+      return defaultValue;
+    }
+    
+    if(ignoreCase) tag = tag.toLowerCase();
+    
+    boolean isTag     = false;
+    boolean isComment = false;
+    boolean tagFound  = false;
+    int endOpenTag    = -1;
+    int begCloseTag   = -1;
+    StringBuilder sbTagName = new StringBuilder();
+    for(int i = 0; i < length; i++) {
+      char c = xml.charAt(i);
+      
+      if(isComment) {
+        if(c == '>' && xml.substring(i-2, i).equals("--")) {
+          isComment = false;
+        }
+        continue;
+      }
+      else if(c == '-') {
+        if(i > 2 && xml.substring(i-3, i).equals("<!-")) {
+          isComment = true;
+        }
+      }
+      
+      if(c == '<') {
+        isTag = true;
+        sbTagName.setLength(0);
+        begCloseTag = i;
+      }
+      else if(c == '>') {
+        isTag = false;
+        
+        String  tagName  = ignoreCase ? sbTagName.toString().toLowerCase().trim() : sbTagName.toString().trim();
+        boolean closeTag = tagName.startsWith("/");
+        int sepAttribs = tagName.indexOf(' ');
+        if(sepAttribs > 0) {
+          tagName = tagName.substring(0, sepAttribs);
+        }
+        int sepNamespace = tagName.indexOf(':');
+        if(sepNamespace >= 0) {
+          tagName = tagName.substring(sepNamespace + 1);
+        }
+        
+        if(tagName.equals(tag)) {
+          if(closeTag) {
+            break;
+          }
+          else {
+            tagFound    = true;
+            endOpenTag  = i;
+            begCloseTag = -1;
+          }
+        }
+      }
+      else if(isTag) {
+        sbTagName.append(c);
+      }
+    }
+    
+    if(!tagFound) return defaultValue;
+    if(begCloseTag < endOpenTag) {
+      begCloseTag = length;
+    }
+    
+    String value = xml.substring(endOpenTag + 1, begCloseTag);
+    if(value.startsWith("<![CDATA[") && value.endsWith("]]>")) {
+      return value.substring(9, value.length()-3);
+    }
+    
+    int iInnerOpenTag = value.indexOf('<');
+    if(iInnerOpenTag >= 0) {
+      int iInnerCloseTag = value.lastIndexOf('>');
+      if(iInnerCloseTag > iInnerOpenTag) {
+        String s1 = value.substring(0, iInnerOpenTag);
+        String s2 = value.substring(iInnerCloseTag + 1);
+        value = s1 + s2;
+      }
+    }
+    return value.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&quot;", "\"").replace("&apos;", "'");
+  }
+  
+  public static
   String toEscapedText(String text, String sDefault)
   {
     if(text == null) return sDefault;
     int iLength = text.length();
     if(iLength == 0) return "";
-    StringBuffer sb = new StringBuffer(iLength);
+    StringBuilder sb = new StringBuilder(iLength);
     for(int i = 0; i < iLength; i++) {
       char c = text.charAt(i);
       if(c == '<')  sb.append("&lt;");   else
@@ -154,7 +411,7 @@ class SUtil
     if(text == null) return sDefault;
     int iLength = text.length();
     if(iLength == 0) return "";
-    StringBuffer sb = new StringBuffer(iLength);
+    StringBuilder sb = new StringBuilder(iLength);
     for(int i = 0; i < iLength; i++) {
       char c = text.charAt(i);
       switch (c) {
@@ -181,6 +438,8 @@ class SUtil
         case '\355':   sb.append("&iacute;"); break;
         case '\363':   sb.append("&oacute;"); break;
         case '\372':   sb.append("&uacute;"); break;
+        case '\347':   sb.append("&ccedil;"); break;
+        case '\307':   sb.append("&Ccedil;"); break;
         case '\252':   sb.append("&ordf;");   break;
         case '\260':   sb.append("&deg;");    break;
         case '\u20ac': sb.append("&euro;");   break;
@@ -194,96 +453,6 @@ class SUtil
           }
         }
       }
-    }
-    return sb.toString();
-  }
-  
-  public static
-  String denormalizeText(String sText)
-  {
-    if(sText == null || sText.length() <= 1) return sText;
-    // i < sText.length() - 1 because String s = sText.substring(i, i + 2);
-    boolean boReplaced = false;
-    StringBuffer sb = new StringBuffer();
-    for(int i = 0; i < sText.length() - 1; i++) {
-      char c = sText.charAt(i);
-      String s = sText.substring(i, i + 2);
-      boReplaced = true;
-      if(s.equals("a'")) sb.append('\340'); else
-      if(s.equals("e'")) sb.append('\350'); else
-      if(s.equals("i'")) sb.append('\354'); else
-      if(s.equals("o'")) {
-        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
-          sb.append('\362');
-        }
-        else {
-          sb.append("o'");
-        }
-      }
-      else
-      if(s.equals("u'")) sb.append('\371'); else
-      if(s.equals("a`")) sb.append('\341'); else
-      if(s.equals("e`")) sb.append('\351'); else
-      if(s.equals("i`")) sb.append('\355'); else
-      if(s.equals("o`")) sb.append('\363'); else
-      if(s.equals("u`")) sb.append('\372'); else
-      if(s.equals("A'")) sb.append('\300'); else
-      if(s.equals("E'")) sb.append('\310'); else
-      if(s.equals("I'")) sb.append('\314'); else
-      if(s.equals("O'")) {
-        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
-          sb.append('\322');
-        }
-        else {
-          sb.append("O'");
-        }
-      }
-      else
-      if(s.equals("U'")) sb.append('\331'); else
-      if(s.equals("A`")) sb.append('\301'); else
-      if(s.equals("E`")) sb.append('\311'); else
-      if(s.equals("I`")) sb.append('\315'); else
-      if(s.equals("O`")) sb.append('\323'); else
-      if(s.equals("U`")) sb.append('\332'); else {
-        sb.append(c);
-        boReplaced = false;
-      }
-      if(boReplaced) i++;
-      
-    }
-    char cLast = sText.charAt(sText.length() - 1);
-    if(cLast != '\'' && cLast != '`') sb.append(cLast);
-    return sb.toString();
-  }
-  
-  public static
-  String normalizeText(String sText)
-  {
-    if(sText == null || sText.length() == 0) return sText;
-    StringBuffer sb = new StringBuffer();
-    for(int i = 0; i < sText.length(); i++) {
-      char c = sText.charAt(i);
-      if(c == '\340') sb.append("a'"); else
-      if(c == '\350') sb.append("e'"); else
-      if(c == '\354') sb.append("i'"); else
-      if(c == '\362') sb.append("o'"); else
-      if(c == '\371') sb.append("u'"); else
-      if(c == '\341') sb.append("a`"); else
-      if(c == '\351') sb.append("e`"); else
-      if(c == '\355') sb.append("i`"); else
-      if(c == '\363') sb.append("o`"); else
-      if(c == '\372') sb.append("u`"); else
-      if(c == '\300') sb.append("A'"); else
-      if(c == '\310') sb.append("E'"); else
-      if(c == '\314') sb.append("I'"); else
-      if(c == '\322') sb.append("O'"); else
-      if(c == '\331') sb.append("U'"); else
-      if(c == '\301') sb.append("A`"); else
-      if(c == '\311') sb.append("E`"); else
-      if(c == '\315') sb.append("I`"); else
-      if(c == '\323') sb.append("O`"); else
-      if(c == '\332') sb.append("U`"); else
-      if(c > 127) sb.append(" ");else sb.append(c);
     }
     return sb.toString();
   }
@@ -318,21 +487,23 @@ class SUtil
           int iEnd = sText.indexOf(';', i);
           if(iEnd > 0 && iEnd - i <= 8) {
             String sSeq = sText.substring(i, iEnd + 1);
-            if(sSeq.equalsIgnoreCase("&agrave;")) sbResult.append('\340'); else
-            if(sSeq.equalsIgnoreCase("&egrave;")) sbResult.append('\350'); else
-            if(sSeq.equalsIgnoreCase("&igrave;")) sbResult.append('\354'); else
-            if(sSeq.equalsIgnoreCase("&ograve;")) sbResult.append('\362'); else
-            if(sSeq.equalsIgnoreCase("&ugrave;")) sbResult.append('\371'); else
-            if(sSeq.equalsIgnoreCase("&aacute;")) sbResult.append('\341'); else
-            if(sSeq.equalsIgnoreCase("&eacute;")) sbResult.append('\351'); else
-            if(sSeq.equalsIgnoreCase("&iacute;")) sbResult.append('\355'); else
-            if(sSeq.equalsIgnoreCase("&oacute;")) sbResult.append('\363'); else
-            if(sSeq.equalsIgnoreCase("&uacute;")) sbResult.append('\372'); else
-            if(sSeq.equalsIgnoreCase("&ordf;"))   sbResult.append('\252'); else
-            if(sSeq.equalsIgnoreCase("&deg;"))    sbResult.append('\260'); else
-            if(sSeq.equalsIgnoreCase("&euro;"))   sbResult.append('\u20ac'); else
-            if(sSeq.equalsIgnoreCase("&gt;"))     sbResult.append('>');    else
-            if(sSeq.equalsIgnoreCase("&lt;"))     sbResult.append('<');
+            if(sSeq.equalsIgnoreCase("&agrave;"))      sbResult.append('\340');
+            else if(sSeq.equalsIgnoreCase("&egrave;")) sbResult.append('\350');
+            else if(sSeq.equalsIgnoreCase("&igrave;")) sbResult.append('\354');
+            else if(sSeq.equalsIgnoreCase("&ograve;")) sbResult.append('\362');
+            else if(sSeq.equalsIgnoreCase("&ugrave;")) sbResult.append('\371');
+            else if(sSeq.equalsIgnoreCase("&aacute;")) sbResult.append('\341');
+            else if(sSeq.equalsIgnoreCase("&eacute;")) sbResult.append('\351');
+            else if(sSeq.equalsIgnoreCase("&iacute;")) sbResult.append('\355');
+            else if(sSeq.equalsIgnoreCase("&oacute;")) sbResult.append('\363');
+            else if(sSeq.equalsIgnoreCase("&uacute;")) sbResult.append('\372');
+            else if(sSeq.equalsIgnoreCase("&ccedil;")) sbResult.append('\347');
+            else if(sSeq.equalsIgnoreCase("&Ccedil;")) sbResult.append('\307');
+            else if(sSeq.equalsIgnoreCase("&ordf;"))   sbResult.append('\252');
+            else if(sSeq.equalsIgnoreCase("&deg;"))    sbResult.append('\260');
+            else if(sSeq.equalsIgnoreCase("&euro;"))   sbResult.append('\u20ac');
+            else if(sSeq.equalsIgnoreCase("&gt;"))     sbResult.append('>');
+            else if(sSeq.equalsIgnoreCase("&lt;"))     sbResult.append('<');
             i = iEnd;
           }
           else {
@@ -345,6 +516,99 @@ class SUtil
       }
     }
     return sbResult.toString();
+  }
+  
+  public static
+  String denormalizeText(String sText)
+  {
+    if(sText == null || sText.length() <= 1) return sText;
+    // i < sText.length() - 1 because String s = sText.substring(i, i + 2);
+    boolean boReplaced = false;
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < sText.length() - 1; i++) {
+      char c = sText.charAt(i);
+      String s = sText.substring(i, i + 2);
+      boReplaced = true;
+      if(s.equals("a'")) sb.append('\340');
+      else if(s.equals("e'")) sb.append('\350');
+      else if(s.equals("i'")) sb.append('\354');
+      else if(s.equals("o'")) {
+        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
+          sb.append('\362');
+        }
+        else {
+          sb.append("o'");
+        }
+      }
+      else if(s.equals("u'")) sb.append('\371');
+      else if(s.equals("a`")) sb.append('\341');
+      else if(s.equals("e`")) sb.append('\351');
+      else if(s.equals("i`")) sb.append('\355');
+      else if(s.equals("o`")) sb.append('\363');
+      else if(s.equals("u`")) sb.append('\372');
+      else if(s.equals("c,")) sb.append('\347');
+      else if(s.equals("A'")) sb.append('\300');
+      else if(s.equals("E'")) sb.append('\310');
+      else if(s.equals("I'")) sb.append('\314');
+      else if(s.equals("O'")) {
+        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
+          sb.append('\322');
+        }
+        else {
+          sb.append("O'");
+        }
+      }
+      else if(s.equals("U'")) sb.append('\331');
+      else if(s.equals("C,")) sb.append('\307');
+      else if(s.equals("A`")) sb.append('\301');
+      else if(s.equals("E`")) sb.append('\311');
+      else if(s.equals("I`")) sb.append('\315');
+      else if(s.equals("O`")) sb.append('\323');
+      else if(s.equals("U`")) sb.append('\332'); {
+        sb.append(c);
+        boReplaced = false;
+      }
+      if(boReplaced) i++;
+    }
+    char cLast = sText.charAt(sText.length() - 1);
+    if(cLast != '\'' && cLast != '`') sb.append(cLast);
+    return sb.toString();
+  }
+  
+  public static
+  String normalizeText(String sText)
+  {
+    if(sText == null || sText.length() == 0) return sText;
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < sText.length(); i++) {
+      char c = sText.charAt(i);
+      if(c == '\340') sb.append("a'");
+      else if(c == '\350') sb.append("e'");
+      else if(c == '\354') sb.append("i'");
+      else if(c == '\362') sb.append("o'");
+      else if(c == '\371') sb.append("u'");
+      else if(c == '\341') sb.append("a`");
+      else if(c == '\351') sb.append("e`");
+      else if(c == '\355') sb.append("i`");
+      else if(c == '\363') sb.append("o`");
+      else if(c == '\372') sb.append("u`");
+      else if(c == '\347') sb.append("c,");
+      else if(c == '\300') sb.append("A'");
+      else if(c == '\310') sb.append("E'");
+      else if(c == '\314') sb.append("I'");
+      else if(c == '\322') sb.append("O'");
+      else if(c == '\331') sb.append("U'");
+      else if(c == '\301') sb.append("A`");
+      else if(c == '\311') sb.append("E`");
+      else if(c == '\315') sb.append("I`");
+      else if(c == '\323') sb.append("O`");
+      else if(c == '\332') sb.append("U`");
+      else if(c == '\332') sb.append("U`");
+      else if(c == '\307') sb.append("C,");
+      else if(c > 127) sb.append(" ");
+      else sb.append(c);
+    }
+    return sb.toString();
   }
   
   public static

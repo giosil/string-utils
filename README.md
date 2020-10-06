@@ -3,7 +3,10 @@
 A collection of string management utilities:
 
 * Hamming distance;
-* Levenshtein Distance.
+* Levenshtein Distance;
+* Get XML value
+* Get JSON value from object
+* Normalization
 
 ## Build
 
