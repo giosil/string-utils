@@ -1,5 +1,6 @@
 package org.dew.test;
 
+import org.dew.sutil.Obfuscator;
 import org.dew.sutil.SUtil;
 
 import junit.framework.Test;
@@ -20,14 +21,14 @@ public class TestStringUtils extends TestCase {
     String s1 = "change";
     String s2 = "charge";
     
-    int hd = SUtil.getHammingDistance(s1, s2);
-    System.out.println("SUtil.getHammingDistance(\"" + s1 + "\", \"" + s2 + "\") -> " + hd);
+    int hd = SUtil.getHammingDist(s1, s2);
+    System.out.println("SUtil.getHammingDist(\"" + s1 + "\", \"" + s2 + "\") -> " + hd);
     
-    int ldr = SUtil.getLevenshteinDistance(s1, s2);
-    System.out.println("SUtil.getLevenshteinDistance(\"" + s1 + "\", \"" + s2 + "\") -> " + ldr);
+    int ldr = SUtil.getLevenshteinDist(s1, s2);
+    System.out.println("SUtil.getLevenshteinDist(\"" + s1 + "\", \"" + s2 + "\") -> " + ldr);
     
-    int ldd = SUtil.getLevenshteinDistanceDyn(s1, s2);
-    System.out.println("SUtil.getLevenshteinDistanceDyn(\"" + s1 + "\", \"" + s2 + "\") -> " + ldd);
+    int ldd = SUtil.getLevenshteinDistDyn(s1, s2);
+    System.out.println("SUtil.getLevenshteinDistDyn(\"" + s1 + "\", \"" + s2 + "\") -> " + ldd);
     
     String xml = "<?xml version=\"1.0\"?>";
     xml += "<d:person xmlns:d=\"demo\">";
@@ -63,6 +64,13 @@ public class TestStringUtils extends TestCase {
     
     lastName = SUtil.getXmlAttribVal(xml, tag, att, def);
     System.out.println("SUtil.getXmlAttribVal(xml, \"" + tag + "\", \"" + att + "\", \"" + def + "\") -> " + lastName);
+    
+    // Obfuscator
+    String text = "Clark Kent";
+    String tenc = Obfuscator.encrypt(text);
+    String tdec = Obfuscator.decrypt(tenc);
+    System.out.println("Obfuscator.encrypt(\"" + text + "\") -> " + tenc);
+    System.out.println("Obfuscator.decrypt(\"" + tenc + "\") -> " + tdec);
   }
   
 }

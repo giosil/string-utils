@@ -13,9 +13,54 @@
  */
 package org.dew.sutil;
 
+/**
+ * A collection of string utilities:
+ */
 public
 class SUtil
 {
+  /**
+   * Left padding.
+   * 
+   * @param text string
+   * @param c character
+   * @param length of result
+   * @return left padding
+   */
+  public static
+  String lpad(String text, char c, int length)
+  {
+    if(text == null) text = "";
+    int iTextLength = text.length();
+    if(iTextLength >= length) return text;
+    int diff = length - iTextLength;
+    StringBuffer sb = new StringBuffer();
+    for(int i = 0; i < diff; i++) sb.append(c);
+    sb.append(text);
+    return sb.toString();
+  }
+  
+  /**
+   * Right padding.
+   * 
+   * @param text string
+   * @param c character
+   * @param length of result
+   * @return right padding
+   */
+  public static
+  String rpad(String text, char c, int length)
+  {
+    if(text == null) text = "";
+    int iTextLength = text.length();
+    if(iTextLength >= length) return text;
+    int diff = length - iTextLength;
+    StringBuffer sb = new StringBuffer();
+    sb.append(text);
+    for(int i = 0; i < diff; i++) sb.append(c);
+    return sb.toString();
+  }
+  
   /**
    * Calculate Hamming distance.
    * 
@@ -24,7 +69,7 @@ class SUtil
    * @return Hamming distance: different character count.
    */
   public static 
-  int getHammingDistance(String s1, String s2) 
+  int getHammingDist(String s1, String s2) 
   {
     if(s1 == null && s2 == null) {
       return 0;
@@ -56,7 +101,7 @@ class SUtil
    * @return Levenshtein Distance
    */
   public static 
-  int getLevenshteinDistance(String s1, String s2) 
+  int getLevenshteinDist(String s1, String s2) 
   {
     if(s1 == null && s2 == null) {
       return 0;
@@ -70,9 +115,9 @@ class SUtil
     
     int costOfSubstitution = s1.charAt(0) == s2.charAt(0) ? 0 : 1;
     
-    int sub = getLevenshteinDistance(s1.substring(1), s2.substring(1)) + costOfSubstitution;
-    int ins = getLevenshteinDistance(s1, s2.substring(1)) + 1;
-    int del = getLevenshteinDistance(s1.substring(1), s2) + 1;
+    int sub = getLevenshteinDist(s1.substring(1), s2.substring(1)) + costOfSubstitution;
+    int ins = getLevenshteinDist(s1, s2.substring(1)) + 1;
+    int del = getLevenshteinDist(s1.substring(1), s2) + 1;
     
     return min(sub, ins, del);
   }
@@ -85,7 +130,7 @@ class SUtil
    * @return Levenshtein Distance
    */
   public static 
-  int getLevenshteinDistanceDyn(String s1, String s2) 
+  int getLevenshteinDistDyn(String s1, String s2) 
   {
     if(s1 == null && s2 == null) {
       return 0;
@@ -791,6 +836,41 @@ class SUtil
       else if(c == '\307') sb.append("C,");
       else if(c > 127) sb.append(" ");
       else sb.append(c);
+    }
+    return sb.toString();
+  }
+  
+  public static
+  String wrap(String text, int cols)
+  {
+    if(text == null || text.length() == 0) return text;
+    StringBuilder sb = new StringBuilder();
+    int iLastBreak = 0;
+    int iTextLenth = text.length();
+    for(int i = 0; i < iTextLenth; i++) {
+      char c = text.charAt(i);
+      if(c == ' ' || c == '.' || c == ',' || c == ';' || c == ':') {
+        sb.append(c);
+        if(iTextLenth > i + 1) {
+          char cNext = text.charAt(i + 1);
+          if(cNext == ' ') {
+            sb.append(' ');
+            i++;
+          }
+        }
+        if(i - iLastBreak > cols) {
+          int iNextNewLine = text.indexOf('\n', i);
+          if(iNextNewLine < 0 || iNextNewLine - i > 3) {
+            sb.append('\n');
+            iLastBreak = i;
+          }
+        }
+        continue;
+      }
+      sb.append(c);
+      if(c == '\n') {
+        iLastBreak = i;
+      }
     }
     return sb.toString();
   }
