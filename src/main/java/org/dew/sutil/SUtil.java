@@ -669,6 +669,12 @@ class SUtil
         case '\372':   sb.append("&uacute;"); break;
         case '\347':   sb.append("&ccedil;"); break;
         case '\307':   sb.append("&Ccedil;"); break;
+        case '\361':   sb.append("&ntilde;"); break;
+        case '\342':   sb.append("&acirc;");  break;
+        case '\352':   sb.append("&ecirc;");  break;
+        case '\356':   sb.append("&icirc;");  break;
+        case '\364':   sb.append("&ocirc;");  break;
+        case '\373':   sb.append("&ucirc;");  break;
         case '\252':   sb.append("&ordf;");   break;
         case '\260':   sb.append("&deg;");    break;
         case '\u20ac': sb.append("&euro;");   break;
@@ -728,6 +734,12 @@ class SUtil
             else if(sSeq.equalsIgnoreCase("&uacute;")) sbResult.append('\372');
             else if(sSeq.equalsIgnoreCase("&ccedil;")) sbResult.append('\347');
             else if(sSeq.equalsIgnoreCase("&Ccedil;")) sbResult.append('\307');
+            else if(sSeq.equalsIgnoreCase("&ntilde;")) sbResult.append('\361');
+            else if(sSeq.equalsIgnoreCase("&acirc;"))  sbResult.append('\342');
+            else if(sSeq.equalsIgnoreCase("&ecirc;"))  sbResult.append('\352');
+            else if(sSeq.equalsIgnoreCase("&icirc;"))  sbResult.append('\356');
+            else if(sSeq.equalsIgnoreCase("&ocirc;"))  sbResult.append('\364');
+            else if(sSeq.equalsIgnoreCase("&ucirc;"))  sbResult.append('\373');
             else if(sSeq.equalsIgnoreCase("&ordf;"))   sbResult.append('\252');
             else if(sSeq.equalsIgnoreCase("&deg;"))    sbResult.append('\260');
             else if(sSeq.equalsIgnoreCase("&euro;"))   sbResult.append('\u20ac');
@@ -775,7 +787,13 @@ class SUtil
       else if(s.equals("i`")) sb.append('\355');
       else if(s.equals("o`")) sb.append('\363');
       else if(s.equals("u`")) sb.append('\372');
-      else if(s.equals("c,")) sb.append('\347');
+      else if(s.equals("c~")) sb.append('\347');
+      else if(s.equals("n~")) sb.append('\361');
+      else if(s.equals("a^")) sb.append('\342');
+      else if(s.equals("e^")) sb.append('\352');
+      else if(s.equals("i^")) sb.append('\356');
+      else if(s.equals("o^")) sb.append('\364');
+      else if(s.equals("u^")) sb.append('\373');
       else if(s.equals("A'")) sb.append('\300');
       else if(s.equals("E'")) sb.append('\310');
       else if(s.equals("I'")) sb.append('\314');
@@ -788,7 +806,7 @@ class SUtil
         }
       }
       else if(s.equals("U'")) sb.append('\331');
-      else if(s.equals("C,")) sb.append('\307');
+      else if(s.equals("C~")) sb.append('\307');
       else if(s.equals("A`")) sb.append('\301');
       else if(s.equals("E`")) sb.append('\311');
       else if(s.equals("I`")) sb.append('\315');
@@ -821,7 +839,8 @@ class SUtil
       else if(c == '\355') sb.append("i`");
       else if(c == '\363') sb.append("o`");
       else if(c == '\372') sb.append("u`");
-      else if(c == '\347') sb.append("c,");
+      else if(c == '\347') sb.append("c~");
+      else if(c == '\361') sb.append("n~");
       else if(c == '\300') sb.append("A'");
       else if(c == '\310') sb.append("E'");
       else if(c == '\314') sb.append("I'");
@@ -833,7 +852,12 @@ class SUtil
       else if(c == '\323') sb.append("O`");
       else if(c == '\332') sb.append("U`");
       else if(c == '\332') sb.append("U`");
-      else if(c == '\307') sb.append("C,");
+      else if(c == '\307') sb.append("C~");
+      else if(c == '\342') sb.append("a^");
+      else if(c == '\352') sb.append("e^");
+      else if(c == '\356') sb.append("i^");
+      else if(c == '\364') sb.append("o^");
+      else if(c == '\373') sb.append("u^");
       else if(c > 127) sb.append(" ");
       else sb.append(c);
     }
