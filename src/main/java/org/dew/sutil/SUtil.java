@@ -499,7 +499,8 @@ class SUtil
             String tagWithAttribs = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
             int[] valueBounds = getValueBoundsFromKeyValuePair(tagWithAttribs, attribName, '=');
             if(valueBounds != null && valueBounds.length > 1 && valueBounds[0] >= 0) {
-              return sbTag.toString().trim().substring(valueBounds[0], valueBounds[1]);
+              String result =  sbTag.toString().trim().substring(valueBounds[0], valueBounds[1]);
+              return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n");
             }
           }
         }
@@ -519,7 +520,8 @@ class SUtil
     if(valueBounds == null || valueBounds.length < 2 || valueBounds[0] < 0) {
       return defaultValue;
     }
-    return text.substring(valueBounds[0], valueBounds[1]);
+    String result = text.substring(valueBounds[0], valueBounds[1]);
+    return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n");
   }
   
   public static
