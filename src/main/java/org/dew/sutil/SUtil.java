@@ -677,6 +677,8 @@ class SUtil
         case '\373':   sb.append("&ucirc;");  break;
         case '\252':   sb.append("&ordf;");   break;
         case '\260':   sb.append("&deg;");    break;
+        case '\241':   sb.append("&iexcl;");  break;
+        case '\277':   sb.append("&iquest;"); break;
         case '\u20ac': sb.append("&euro;");   break;
         default: {
           if(c < 128) {
@@ -722,7 +724,18 @@ class SUtil
           int iEnd = sText.indexOf(';', i);
           if(iEnd > 0 && iEnd - i <= 8) {
             String sSeq = sText.substring(i, iEnd + 1);
-            if(sSeq.equalsIgnoreCase("&agrave;"))      sbResult.append('\340');
+            if(sSeq.equalsIgnoreCase("&nbsp;")) sbResult.append(' ');
+            else if(sSeq.equalsIgnoreCase("&Agrave;")) sbResult.append('\300');
+            else if(sSeq.equalsIgnoreCase("&Egrave;")) sbResult.append('\310');
+            else if(sSeq.equalsIgnoreCase("&Igrave;")) sbResult.append('\314');
+            else if(sSeq.equalsIgnoreCase("&Ograve;")) sbResult.append('\322');
+            else if(sSeq.equalsIgnoreCase("&Ugrave;")) sbResult.append('\331');
+            else if(sSeq.equalsIgnoreCase("&Aacute;")) sbResult.append('\301');
+            else if(sSeq.equalsIgnoreCase("&Eacute;")) sbResult.append('\311');
+            else if(sSeq.equalsIgnoreCase("&Iacute;")) sbResult.append('\315');
+            else if(sSeq.equalsIgnoreCase("&Oacute;")) sbResult.append('\323');
+            else if(sSeq.equalsIgnoreCase("&Uacute;")) sbResult.append('\332');
+            else if(sSeq.equalsIgnoreCase("&agrave;")) sbResult.append('\340');
             else if(sSeq.equalsIgnoreCase("&egrave;")) sbResult.append('\350');
             else if(sSeq.equalsIgnoreCase("&igrave;")) sbResult.append('\354');
             else if(sSeq.equalsIgnoreCase("&ograve;")) sbResult.append('\362');
@@ -732,14 +745,16 @@ class SUtil
             else if(sSeq.equalsIgnoreCase("&iacute;")) sbResult.append('\355');
             else if(sSeq.equalsIgnoreCase("&oacute;")) sbResult.append('\363');
             else if(sSeq.equalsIgnoreCase("&uacute;")) sbResult.append('\372');
-            else if(sSeq.equalsIgnoreCase("&ccedil;")) sbResult.append('\347');
-            else if(sSeq.equalsIgnoreCase("&Ccedil;")) sbResult.append('\307');
-            else if(sSeq.equalsIgnoreCase("&ntilde;")) sbResult.append('\361');
             else if(sSeq.equalsIgnoreCase("&acirc;"))  sbResult.append('\342');
             else if(sSeq.equalsIgnoreCase("&ecirc;"))  sbResult.append('\352');
             else if(sSeq.equalsIgnoreCase("&icirc;"))  sbResult.append('\356');
             else if(sSeq.equalsIgnoreCase("&ocirc;"))  sbResult.append('\364');
             else if(sSeq.equalsIgnoreCase("&ucirc;"))  sbResult.append('\373');
+            else if(sSeq.equalsIgnoreCase("&ccedil;")) sbResult.append('\347');
+            else if(sSeq.equalsIgnoreCase("&Ccedil;")) sbResult.append('\307');
+            else if(sSeq.equalsIgnoreCase("&ntilde;")) sbResult.append('\361');
+            else if(sSeq.equalsIgnoreCase("&iexcl;"))  sbResult.append('\241');
+            else if(sSeq.equalsIgnoreCase("&iquest;")) sbResult.append('\277');
             else if(sSeq.equalsIgnoreCase("&ordf;"))   sbResult.append('\252');
             else if(sSeq.equalsIgnoreCase("&deg;"))    sbResult.append('\260');
             else if(sSeq.equalsIgnoreCase("&euro;"))   sbResult.append('\u20ac');
@@ -794,6 +809,8 @@ class SUtil
       else if(s.equals("i^")) sb.append('\356');
       else if(s.equals("o^")) sb.append('\364');
       else if(s.equals("u^")) sb.append('\373');
+      else if(s.equals("!^")) sb.append('\241');
+      else if(s.equals("?^")) sb.append('\277');
       else if(s.equals("A'")) sb.append('\300');
       else if(s.equals("E'")) sb.append('\310');
       else if(s.equals("I'")) sb.append('\314');
@@ -858,6 +875,8 @@ class SUtil
       else if(c == '\356') sb.append("i^");
       else if(c == '\364') sb.append("o^");
       else if(c == '\373') sb.append("u^");
+      else if(c == '\241') sb.append("!^");
+      else if(c == '\277') sb.append("?^");
       else if(c > 127) sb.append(" ");
       else sb.append(c);
     }
