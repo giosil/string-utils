@@ -13,6 +13,9 @@
  */
 package org.dew.sutil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A collection of string utilities:
  */
@@ -500,7 +503,7 @@ class SUtil
             int[] valueBounds = getValueBoundsFromKeyValuePair(tagWithAttribs, attribName, '=');
             if(valueBounds != null && valueBounds.length > 1 && valueBounds[0] >= 0) {
               String result =  sbTag.toString().trim().substring(valueBounds[0], valueBounds[1]);
-              return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n");
+              return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
             }
           }
         }
@@ -521,7 +524,7 @@ class SUtil
       return defaultValue;
     }
     String result = text.substring(valueBounds[0], valueBounds[1]);
-    return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n");
+    return result.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
   }
   
   public static
@@ -609,6 +612,61 @@ class SUtil
       return new int[] {begValue, endValue};
     }
     return new int[] {-1, -1};
+  }
+  
+  public static
+  List<String> parseSeparatedValuesRow(String row, char separator)
+  {
+    List<String> listResult = new ArrayList<String>();
+    if(row == null || row.length() == 0) {
+      return listResult;
+    }
+    int length = row.length();
+    StringBuilder sbToken = new StringBuilder();
+    boolean text = false;
+    char p = '\0';
+    for(int i = 0; i < length; i++) {
+      char c = row.charAt(i);
+      if(c == '\"') {
+        if(text) {
+          if(p != '\\') {
+            // End Text
+            text = false;
+          }
+        }
+        else {
+          // Begin Text
+          text = true;
+        }
+        sbToken.append(c);
+      }
+      else if(c == separator) {
+        if(text) {
+          sbToken.append(c);
+        }
+        else {
+          String token = sbToken.toString().trim();
+          if(token.startsWith("\"") && token.endsWith("\"") && token.length() > 1) {
+            token = token.substring(1, token.length()-1).trim();
+            token = token.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
+          }
+          sbToken.setLength(0);
+          listResult.add(token);
+        }
+      }
+      else {
+        sbToken.append(c);
+      }
+      p = c;
+    }
+    String token = sbToken.toString().trim();
+    if(token.startsWith("\"") && token.endsWith("\"") && token.length() > 1) {
+      token = token.substring(1, token.length()-1).trim();
+      token = token.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
+    }
+    sbToken.setLength(0);
+    listResult.add(token);
+    return listResult;
   }
   
   public static
@@ -1005,14 +1063,14 @@ class SUtil
       return defaultValue;
     }
     // Strip string
-    if(value.startsWith("\"") && value.endsWith("\"")) {
+    if(value.startsWith("\"") && value.endsWith("\"") && value.length() > 1) {
       value = value.substring(1, value.length() - 1);
     }
-    else if(value.startsWith("'") && value.endsWith("'")) {
+    else if(value.startsWith("'") && value.endsWith("'") && value.length() > 1) {
       value = value.substring(1, value.length() - 1);
     }
     // Replace escape characters
-    return value.replace("\\n", "\n").replace("\\t", "\t");
+    return value.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
   }
   
   private static
