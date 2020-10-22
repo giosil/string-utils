@@ -615,7 +615,19 @@ class SUtil
   }
   
   public static
-  List<String> parseSeparatedValuesRow(String row, char separator)
+  List<String> parseCSVRow(String row)
+  {
+    return parseSeparatedValuesRow(row, ',', '\"');
+  }
+  
+  public static
+  List<String> parseCSVRow(String row, char separator)
+  {
+    return parseSeparatedValuesRow(row, separator, '\"');
+  }
+  
+  public static
+  List<String> parseSeparatedValuesRow(String row, char separator, char textDelimiter)
   {
     List<String> listResult = new ArrayList<String>();
     if(row == null || row.length() == 0) {
@@ -627,7 +639,7 @@ class SUtil
     char p = '\0';
     for(int i = 0; i < length; i++) {
       char c = row.charAt(i);
-      if(c == '\"') {
+      if(c == textDelimiter) {
         if(text) {
           if(p != '\\') {
             // End Text
@@ -646,7 +658,7 @@ class SUtil
         }
         else {
           String token = sbToken.toString().trim();
-          if(token.startsWith("\"") && token.endsWith("\"") && token.length() > 1) {
+          if(token.length() > 1 && token.charAt(0) == textDelimiter && token.charAt(token.length()-1) == textDelimiter) {
             token = token.substring(1, token.length()-1).trim();
             token = token.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
           }
@@ -660,7 +672,7 @@ class SUtil
       p = c;
     }
     String token = sbToken.toString().trim();
-    if(token.startsWith("\"") && token.endsWith("\"") && token.length() > 1) {
+    if(token.length() > 1 && token.charAt(0) == textDelimiter && token.charAt(token.length()-1) == textDelimiter) {
       token = token.substring(1, token.length()-1).trim();
       token = token.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
     }

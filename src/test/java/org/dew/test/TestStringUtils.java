@@ -1,5 +1,7 @@
 package org.dew.test;
 
+import java.util.List;
+
 import org.dew.sutil.Obfuscator;
 import org.dew.sutil.SUtil;
 
@@ -64,6 +66,10 @@ public class TestStringUtils extends TestCase {
     
     lastName = SUtil.getXmlAttribVal(xml, tag, att, def);
     System.out.println("SUtil.getXmlAttribVal(xml, \"" + tag + "\", \"" + att + "\", \"" + def + "\") -> " + lastName);
+    
+    String csvRow = " \"A\",  3, \",\", \"\", ";
+    List<String> values = SUtil.parseCSVRow(csvRow);
+    System.out.println("SUtil.parseCSVRow(\"" + csvRow + "\" -> " + values);
     
     // Obfuscator
     String text = "Clark Kent";
