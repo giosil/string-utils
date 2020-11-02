@@ -940,7 +940,6 @@ class SUtil
       else if(c == '\315') sb.append("I`");
       else if(c == '\323') sb.append("O`");
       else if(c == '\332') sb.append("U`");
-      else if(c == '\332') sb.append("U`");
       else if(c == '\307') sb.append("C~");
       else if(c == '\342') sb.append("a^");
       else if(c == '\352') sb.append("e^");
