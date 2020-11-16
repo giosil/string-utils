@@ -221,6 +221,9 @@ class SUtil
         
         String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
+        if(closeTag) {
+          tagName = tagName.substring(1).trim();
+        }
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
           tagName = tagName.substring(0, sepAttribs);
@@ -293,6 +296,9 @@ class SUtil
         
         String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
+        if(closeTag) {
+          tagName = tagName.substring(1).trim();
+        }
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
           tagName = tagName.substring(0, sepAttribs);
@@ -381,6 +387,9 @@ class SUtil
         
         String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
+        if(closeTag) {
+          tagName = tagName.substring(1).trim();
+        }
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
           tagName = tagName.substring(0, sepAttribs);
@@ -488,6 +497,9 @@ class SUtil
         
         String  tagName  = ignoreCase ? sbTag.toString().toLowerCase().trim() : sbTag.toString().trim();
         boolean closeTag = tagName.startsWith("/");
+        if(closeTag) {
+          tagName = tagName.substring(1).trim();
+        }
         int sepAttribs = tagName.indexOf(' ');
         if(sepAttribs > 0) {
           tagName = tagName.substring(0, sepAttribs);
