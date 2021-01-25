@@ -864,7 +864,7 @@ class SUtil
     if(sText == null || sText.length() <= 1) return sText;
     // i < sText.length() - 1 because String s = sText.substring(i, i + 2);
     boolean boReplaced = false;
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(sText.length());
     for(int i = 0; i < sText.length() - 1; i++) {
       char c = sText.charAt(i);
       String s = sText.substring(i, i + 2);
@@ -927,7 +927,7 @@ class SUtil
   String normalizeText(String sText)
   {
     if(sText == null || sText.length() == 0) return sText;
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder(sText.length());
     for(int i = 0; i < sText.length(); i++) {
       char c = sText.charAt(i);
       if(c == '\340') sb.append("a'");
@@ -960,7 +960,7 @@ class SUtil
       else if(c == '\373') sb.append("u^");
       else if(c == '\241') sb.append("!^");
       else if(c == '\277') sb.append("?^");
-      else if(c > 127) sb.append(" ");
+      else if(c > 126) sb.append(" ");
       else sb.append(c);
     }
     return sb.toString();
