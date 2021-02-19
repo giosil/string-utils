@@ -14,7 +14,9 @@
 package org.dew.sutil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * A collection of string utilities:
@@ -22,6 +24,139 @@ import java.util.List;
 public
 class SUtil
 {
+  protected static String EXCLUDE_IN_SEARCH_TOKENIZATION  = "|";
+  static {
+    // IT tokens
+    EXCLUDE_IN_SEARCH_TOKENIZATION += "il|la|le|li|lo|in|ne|un|su|da|di|al|ed|";
+    EXCLUDE_IN_SEARCH_TOKENIZATION += "con|col|per|tra|del|dal|sul|nel|";
+    EXCLUDE_IN_SEARCH_TOKENIZATION += "agli|alla|allo|anche|aveva|avevano|come|dall|dalla|degli|dell|della|delle|dello|deve|domani|dopo|dovevano|";
+    EXCLUDE_IN_SEARCH_TOKENIZATION += "quali|quando|quanto|quei|quella|quelli|quello|questa|questi|questo|sono|stati|stato|suoi|tutta|tutti|tutto|";
+  }
+  
+  public static
+  String buildSearchLikeFilter(String text) 
+  {
+    if(text == null || text.trim().length() == 0) {
+      return "%";
+    }
+    
+    StringBuilder sb = new StringBuilder(text.length());
+    for(int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if(Character.isLetter(c) || Character.isDigit(c)) {
+        sb.append(c); 
+      }
+      else {
+        sb.append(' ');
+      }
+    }
+    
+    List<String> listTokens = new ArrayList<String>();
+    StringTokenizer st = new StringTokenizer(sb.toString(), " ");
+    while(st.hasMoreTokens()) {
+      String sToken = st.nextToken().toLowerCase().trim();
+      if(sToken.length() > 1) {
+        if(EXCLUDE_IN_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
+        if(!listTokens.contains(sToken)) listTokens.add(sToken);
+      }
+    }
+    if(listTokens.size() == 0) {
+      return "%";
+    }
+    
+    Collections.sort(listTokens);
+    
+    StringBuilder sbResult = new StringBuilder();
+    for(int i = 0; i < listTokens.size(); i++) {
+      String sToken = listTokens.get(i);
+      // Si toglie l'ultimo carattere per i plurali
+      sToken = sToken.substring(0, sToken.length()-1) + "%";
+      sbResult.append("," + sToken);
+    }
+    return "%" + sbResult;
+  }
+  
+  public static
+  String searchTokenization(String text) 
+  {
+    if(text == null || text.trim().length() == 0) {
+      return "";
+    }
+    
+    StringBuffer sb = new StringBuffer(text.length());
+    for(int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if(Character.isLetter(c) || Character.isDigit(c)) {
+        sb.append(c); 
+      }
+      else {
+        sb.append(' ');
+      }
+    }
+    
+    List<String> listTokens = new ArrayList<String>();
+    StringTokenizer st = new StringTokenizer(sb.toString(), " ");
+    while(st.hasMoreTokens()) {
+      String sToken = normalizeSearchToken(st.nextToken().toLowerCase().trim());
+      if(sToken.length() > 1) {
+        if(EXCLUDE_IN_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
+        if(!listTokens.contains(sToken)) listTokens.add(sToken);
+      }
+    }
+    if(listTokens.size() == 0) return "";
+    
+    Collections.sort(listTokens);
+    
+    StringBuilder sbResult = new StringBuilder();
+    for(int i = 0; i < listTokens.size(); i++) {
+      sbResult.append("," + listTokens.get(i));
+    }
+    return sbResult + ",";
+  }
+  
+  public static
+  String normalizeSearchToken(String token)
+  {
+    if(token == null || token.length() == 0) return token;
+    int length = token.length();
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < length; i++) {
+      char c = token.charAt(i);
+      if(c == '\340') sb.append("a");
+      else if(c == '\350') sb.append("e");
+      else if(c == '\354') sb.append("i");
+      else if(c == '\362') sb.append("o");
+      else if(c == '\371') sb.append("u");
+      else if(c == '\341') sb.append("a");
+      else if(c == '\351') sb.append("e");
+      else if(c == '\355') sb.append("i");
+      else if(c == '\363') sb.append("o");
+      else if(c == '\372') sb.append("u");
+      else if(c == '\347') sb.append("c");
+      else if(c == '\361') sb.append("n");
+      else if(c == '\300') sb.append("A");
+      else if(c == '\310') sb.append("E");
+      else if(c == '\314') sb.append("I");
+      else if(c == '\322') sb.append("O");
+      else if(c == '\331') sb.append("U");
+      else if(c == '\301') sb.append("A");
+      else if(c == '\311') sb.append("E");
+      else if(c == '\315') sb.append("I");
+      else if(c == '\323') sb.append("O");
+      else if(c == '\332') sb.append("U");
+      else if(c == '\332') sb.append("U");
+      else if(c == '\307') sb.append("C");
+      else if(c == '\342') sb.append("a");
+      else if(c == '\352') sb.append("e");
+      else if(c == '\356') sb.append("i");
+      else if(c == '\364') sb.append("o");
+      else if(c == '\373') sb.append("u");
+      else if(c > 127) continue;
+      else sb.append(c);
+    }
+    return sb.toString();
+  }
+  
   /**
    * Left padding.
    * 
