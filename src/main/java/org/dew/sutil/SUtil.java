@@ -24,13 +24,13 @@ import java.util.StringTokenizer;
 public
 class SUtil
 {
-  protected static String EXCLUDE_IN_SEARCH_TOKENIZATION  = "|";
+  protected static String EXCLUDE_FROM_SEARCH_TOKENIZATION = "|";
   static {
-    // IT tokens
-    EXCLUDE_IN_SEARCH_TOKENIZATION += "il|la|le|li|lo|in|ne|un|su|da|di|al|ed|";
-    EXCLUDE_IN_SEARCH_TOKENIZATION += "con|col|per|tra|del|dal|sul|nel|";
-    EXCLUDE_IN_SEARCH_TOKENIZATION += "agli|alla|allo|anche|aveva|avevano|come|dall|dalla|degli|dell|della|delle|dello|deve|domani|dopo|dovevano|";
-    EXCLUDE_IN_SEARCH_TOKENIZATION += "quali|quando|quanto|quei|quella|quelli|quello|questa|questi|questo|sono|stati|stato|suoi|tutta|tutti|tutto|";
+    // IT tokens to exclude
+    EXCLUDE_FROM_SEARCH_TOKENIZATION += "il|la|le|li|lo|in|ne|un|su|da|di|al|ed|";
+    EXCLUDE_FROM_SEARCH_TOKENIZATION += "con|col|per|tra|del|dal|sul|nel|";
+    EXCLUDE_FROM_SEARCH_TOKENIZATION += "agli|alla|allo|anche|aveva|avevano|come|dall|dalla|degli|dell|della|delle|dello|deve|domani|dopo|dovevano|";
+    EXCLUDE_FROM_SEARCH_TOKENIZATION += "quali|quando|quanto|quei|quella|quelli|quello|questa|questi|questo|sono|stati|stato|suoi|tutta|tutti|tutto|";
   }
   
   public static
@@ -56,13 +56,11 @@ class SUtil
     while(st.hasMoreTokens()) {
       String sToken = st.nextToken().toLowerCase().trim();
       if(sToken.length() > 1) {
-        if(EXCLUDE_IN_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
+        if(EXCLUDE_FROM_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
         if(!listTokens.contains(sToken)) listTokens.add(sToken);
       }
     }
-    if(listTokens.size() == 0) {
-      return "%";
-    }
+    if(listTokens.size() == 0) return "%";
     
     Collections.sort(listTokens);
     
@@ -99,7 +97,7 @@ class SUtil
     while(st.hasMoreTokens()) {
       String sToken = normalizeSearchToken(st.nextToken().toLowerCase().trim());
       if(sToken.length() > 1) {
-        if(EXCLUDE_IN_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
+        if(EXCLUDE_FROM_SEARCH_TOKENIZATION.indexOf("|" + sToken + "|") >= 0) continue;
         if(!listTokens.contains(sToken)) listTokens.add(sToken);
       }
     }
