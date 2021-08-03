@@ -2,6 +2,7 @@ package org.dew.test;
 
 import java.util.List;
 
+import org.dew.sutil.AES;
 import org.dew.sutil.Obfuscator;
 import org.dew.sutil.SUtil;
 
@@ -19,7 +20,7 @@ public class TestStringUtils extends TestCase {
     return new TestSuite(TestStringUtils.class);
   }
   
-  public void testApp() {
+  public void testApp() throws Exception {
     String s1 = "change";
     String s2 = "charge";
     
@@ -77,6 +78,12 @@ public class TestStringUtils extends TestCase {
     String tdec = Obfuscator.decrypt(tenc);
     System.out.println("Obfuscator.encrypt(\"" + text + "\") -> " + tenc);
     System.out.println("Obfuscator.decrypt(\"" + tenc + "\") -> " + tdec);
+    
+    // Advanced Encryption Standard (AES)
+    String aenc = AES.encrypt(text);
+    String adec = AES.decrypt(aenc);
+    System.out.println("AES.encrypt(\"" + text + "\") -> " + aenc);
+    System.out.println("AES.decrypt(\"" + aenc + "\") -> " + adec);
   }
   
 }
