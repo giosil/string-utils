@@ -1,13 +1,14 @@
 # String Utils - Macro
 
-A collection of macro.
+A collection of macro for Notepad++.
 
 ## For wrap text in double quotes
 
-'''
+```
 Search for: ^(.+)$
 Replace with: "\1",
-'''
+```
+
 
 ## Contributors
 
