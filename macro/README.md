@@ -2,7 +2,7 @@
 
 A collection of macro for Notepad++.
 
-## For wrap text in double quotes
+## Wrap text in double quotes
 
 ```
 Search for: ^(.+)$
