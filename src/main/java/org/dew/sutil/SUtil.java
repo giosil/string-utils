@@ -1045,7 +1045,8 @@ class SUtil
       else if(s.equals("E`")) sb.append('\311');
       else if(s.equals("I`")) sb.append('\315');
       else if(s.equals("O`")) sb.append('\323');
-      else if(s.equals("U`")) sb.append('\332'); {
+      else if(s.equals("U`")) sb.append('\332'); 
+      else {
         sb.append(c);
         boReplaced = false;
       }
@@ -1056,6 +1057,70 @@ class SUtil
     return sb.toString();
   }
   
+  public static
+  String denormalizeTextHTML(String sText)
+  {
+    if(sText == null || sText.length() <= 1) return sText;
+    // i < sText.length() - 1 because String s = sText.substring(i, i + 2);
+    boolean boReplaced = false;
+    StringBuilder sb = new StringBuilder(sText.length());
+    for(int i = 0; i < sText.length() - 1; i++) {
+      char c = sText.charAt(i);
+      String s = sText.substring(i, i + 2);
+      boReplaced = true;
+      if(s.equals("a'")) sb.append("&agrave;");
+      else if(s.equals("e'")) sb.append("&egrave;");
+      else if(s.equals("i'")) sb.append("&igrave;");
+      else if(s.equals("o'")) {
+        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
+          sb.append("&ograve;");
+        }
+        else {
+          sb.append("o'");
+        }
+      }
+      else if(s.equals("u'")) sb.append("&ugrave;");
+      else if(s.equals("a`")) sb.append("&aacute;");
+      else if(s.equals("e`")) sb.append("&eacute;");
+      else if(s.equals("i`")) sb.append("&iacute;");
+      else if(s.equals("o`")) sb.append("&oacute;");
+      else if(s.equals("u`")) sb.append("&uacute;");
+      else if(s.equals("c~")) sb.append("&ccedil;");
+      else if(s.equals("n~")) sb.append("&ntilde;");
+      else if(s.equals("a^")) sb.append("&acirc;");
+      else if(s.equals("e^")) sb.append("&ecirc;");
+      else if(s.equals("i^")) sb.append("&icirc;");
+      else if(s.equals("o^")) sb.append("&ocirc;");
+      else if(s.equals("u^")) sb.append("&ucirc;");
+      else if(s.equals("A'")) sb.append("&Agrave;");
+      else if(s.equals("E'")) sb.append("&Egrave;");
+      else if(s.equals("I'")) sb.append("&Igrave;");
+      else if(s.equals("O'")) {
+        if(i > 1 && !sText.substring(i-2,i).equalsIgnoreCase(" p") && !sText.substring(i-2,i).equalsIgnoreCase("\np")) {
+          sb.append("&Ograve;");
+        }
+        else {
+          sb.append("O'");
+        }
+      }
+      else if(s.equals("U'")) sb.append("&Ugrave;");
+      else if(s.equals("C~")) sb.append("&Ccedil;");
+      else if(s.equals("A`")) sb.append("&Aacute;");
+      else if(s.equals("E`")) sb.append("&Eacute;");
+      else if(s.equals("I`")) sb.append("&Iacute;");
+      else if(s.equals("O`")) sb.append("&Oacute;");
+      else if(s.equals("U`")) sb.append("&Uacute;"); 
+      else {
+        sb.append(c);
+        boReplaced = false;
+      }
+      if(boReplaced) i++;
+    }
+    char cLast = sText.charAt(sText.length() - 1);
+    if(cLast != '\'' && cLast != '`') sb.append(cLast);
+    return sb.toString();
+  }
+
   public static
   String normalizeText(String sText)
   {
