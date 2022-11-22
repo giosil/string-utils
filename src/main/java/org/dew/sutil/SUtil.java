@@ -13,6 +13,10 @@
  */
 package org.dew.sutil;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -909,6 +913,25 @@ class SUtil
       }
     }
     return sb.toString();
+  }
+  
+  public static
+  InputStream iso88591_to_utf8(InputStream is)
+    throws IOException
+  {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    int c = 0;
+    while((c = is.read()) != -1) baos.write(c);
+    byte[] ab_UTF8 = new String(baos.toByteArray(), "ISO-8859-1").getBytes("UTF-8");
+    return new ByteArrayInputStream(ab_UTF8);
+  }
+  
+  public static
+  byte[] iso88591_to_utf8(byte[] content)
+    throws IOException
+  {
+    if(content == null || content.length == 0) return content;
+    return new String(content, "ISO-8859-1").getBytes("UTF-8");
   }
   
   public static
