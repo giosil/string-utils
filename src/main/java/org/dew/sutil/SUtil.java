@@ -1317,6 +1317,18 @@ class SUtil
     return value.replace("\\\"", "\"").replace("\\'", "'").replace("\\n", "\n").replace("\\t", "\t");
   }
   
+  public static 
+  boolean isNumeric(String text)
+  {
+    if(text == null || text.length() == 0) {
+      return false;
+    }
+    for(int i = 0; i < text.length(); i++) {
+      if(!Character.isDigit(text.charAt(i))) return false;
+    }
+    return true;
+  }
+  
   private static
   int min(int a, int b, int c) 
   {
