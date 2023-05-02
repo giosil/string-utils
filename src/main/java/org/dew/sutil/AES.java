@@ -7,8 +7,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
+import java.security.Key;
+import java.security.KeyStore;
 import java.security.spec.KeySpec;
 
 import java.util.Base64;
@@ -40,6 +43,21 @@ class AES
   }
   
   public static 
+  String encrypt(String s, String keystorePath, String keystorePassword, String keyAlias, String keyPassword) 
+    throws Exception
+  {
+    IvParameterSpec ivspec = new IvParameterSpec(INIT_VECTOR);
+    
+    Key key = loadKey(keystorePath, keystorePassword, keyAlias, keyPassword);
+    
+    SecretKeySpec secretKey = new SecretKeySpec(key.getEncoded(), "AES");
+    
+    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
+    return Base64.getEncoder().encodeToString(cipher.doFinal(s.getBytes(StandardCharsets.UTF_8)));
+  }
+  
+  public static 
   String decrypt(String s)
     throws Exception
   {
@@ -53,5 +71,47 @@ class AES
     Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
     cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
     return new String(cipher.doFinal(Base64.getDecoder().decode(s)));
+  }
+  
+  public static 
+  String decrypt(String s, String keystorePath, String keystorePassword, String keyAlias, String keyPassword)
+    throws Exception
+  {
+    IvParameterSpec ivspec = new IvParameterSpec(INIT_VECTOR);
+    
+    Key key = loadKey(keystorePath, keystorePassword, keyAlias, keyPassword);
+    
+    SecretKeySpec secretKey = new SecretKeySpec(key.getEncoded(), "AES");
+    
+    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
+    return new String(cipher.doFinal(Base64.getDecoder().decode(s)));
+  }
+  
+  private static 
+  Key loadKey(String keystorePath, String keystorePassword, String keyAlias, String keyPassword) 
+  {
+    InputStream inputStream = null;
+    try {
+      inputStream = new FileInputStream(keystorePath);
+      
+      KeyStore keystore = KeyStore.getInstance("JCEKS");
+      
+      keystore.load(inputStream, keystorePassword.toCharArray());
+      
+      if (!keystore.containsAlias(keyAlias)) {
+          throw new RuntimeException("Alias " + keyAlias + " for key not found");
+      }
+      
+      Key key = keystore.getKey(keyAlias, keyPassword.toCharArray());
+      
+      return key;
+    }
+    catch (Exception ex) {
+      throw new RuntimeException("Error during load key " + keyAlias + " from " + keystorePath, ex);
+    }
+    finally {
+      if(inputStream != null) try { inputStream.close(); } catch(Exception ex) {}
+    }
   }
 }
