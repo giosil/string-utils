@@ -146,7 +146,6 @@ class SUtil
       else if(c == '\315') sb.append("I");
       else if(c == '\323') sb.append("O");
       else if(c == '\332') sb.append("U");
-      else if(c == '\332') sb.append("U");
       else if(c == '\307') sb.append("C");
       else if(c == '\342') sb.append("a");
       else if(c == '\352') sb.append("e");
@@ -174,7 +173,7 @@ class SUtil
     int iTextLength = text.length();
     if(iTextLength >= length) return text;
     int diff = length - iTextLength;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for(int i = 0; i < diff; i++) sb.append(c);
     sb.append(text);
     return sb.toString();
@@ -195,7 +194,7 @@ class SUtil
     int iTextLength = text.length();
     if(iTextLength >= length) return text;
     int diff = length - iTextLength;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(text);
     for(int i = 0; i < diff; i++) sb.append(c);
     return sb.toString();
