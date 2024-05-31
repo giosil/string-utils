@@ -1328,6 +1328,23 @@ class SUtil
     return true;
   }
   
+  public static
+  String escapeRegExp(String text)
+  {
+    if(text == null || text.length() == 0) {
+      return text;
+    }
+    StringBuilder sb = new StringBuilder(text.length());
+    for(int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if("{}[]()\\|?!+-*.^$<>".indexOf(c) >= 0) {
+        sb.append('\\');
+      }
+      sb.append(c);
+    }
+    return sb.toString();
+  }
+  
   private static
   int min(int a, int b, int c) 
   {
