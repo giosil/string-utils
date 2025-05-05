@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * A collection of string utilities:
+ * A collection of string utilities.
  */
 public
 class SUtil
