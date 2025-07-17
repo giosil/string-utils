@@ -17,7 +17,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -1343,6 +1346,83 @@ class SUtil
       sb.append(c);
     }
     return sb.toString();
+  }
+  
+  public static
+  Calendar toCalendar(String text) 
+  {
+    if(text == null || text.length() < 8) {
+      return null;
+    }
+    List<Integer> listNumbers = getNumbers(text);
+    if(listNumbers == null || listNumbers.size() == 0) {
+      return null;
+    }
+    int yyyy = 0;
+    int mm = 0;
+    int dd = 0;
+    if(listNumbers.size() < 3) {
+      int yyyymmdd = listNumbers.get(0);
+      if(yyyymmdd < 10000000 || yyyymmdd > 99991231) {
+        return null;
+      }
+      yyyy = yyyymmdd / 10000;
+      mm   = (yyyymmdd % 10000) / 100;
+      dd   = (yyyymmdd % 10000) % 100;
+    }
+    else if(listNumbers.size() >= 3) { 
+      int n0 = listNumbers.get(0);
+      if(n0 >= 1000) {
+        yyyy = n0;
+        mm   = listNumbers.get(1);
+        dd   = listNumbers.get(2);
+      }
+      else {
+        yyyy = listNumbers.get(2);
+        mm   = listNumbers.get(1);
+        dd   = n0;
+      }
+    }
+    if(yyyy < 1000 || yyyy > 9999) return null;
+    if(mm < 1 || mm > 12) return null;
+    if(dd < 1 || dd > 31) return null;
+    return new GregorianCalendar(yyyy, mm-1, dd);
+  }
+  
+  public static
+  List<Integer> getNumbers(String text) 
+  {
+    List<Integer> result = new ArrayList<Integer>();
+    if(text == null || text.length() == 0) {
+      return result;
+    }
+    StringBuilder curr = new StringBuilder();
+    for(int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if(Character.isDigit(c)) {
+        curr.append(c);
+      }
+      else if(curr.length() != 0) {
+        try {
+          int number = Integer.parseInt(curr.toString());
+          result.add(number);
+        }
+        catch(Exception ex) {
+          System.err.println("Exception in parsing " + curr + " in getNumbers(" + text + "): " + ex);
+        }
+        curr = new StringBuilder();
+      }
+    }
+    if(curr.length() != 0) {
+      try {
+        int number = Integer.parseInt(curr.toString());
+        result.add(number);
+      }
+      catch(Exception ex) {
+        System.err.println("Exception in parsing " + curr + " in getNumbers(" + text + "): " + ex);
+      }
+    }
+    return result;
   }
   
   private static
