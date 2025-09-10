@@ -1,8 +1,8 @@
 Double\ quoted\ string=0,0,0,0,0,23,198,163
-Identifier=0,0,0,0,0,128,246,167
+Identifier=0,0,0,0,0,102,225,248
 Keyword=1,0,0,0,0,204,108,29
 Multi-line\ comment=0,0,0,0,0,128,128,128
-Others=0,0,0,0,0,243,236,121
+Others=0,0,0,0,0,204,204,244
 SQLEditor.executeSelectedSQL.betweenDelimiter.delimiterType=go
 Single\ quoted\ string=0,0,0,0,0,23,198,163
 Single-line\ comment=0,0,0,0,0,128,128,128
